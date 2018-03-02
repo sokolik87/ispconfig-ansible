@@ -1,0 +1,6 @@
+---
+- hosts: ispconf 
+  remote_user:  root
+  roles:
+    - ispconf
+...

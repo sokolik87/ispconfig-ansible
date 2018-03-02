@@ -1,0 +1,21 @@
+---
+services_enabled:
+        - http
+        - https
+        - ssh
+ports_enabled:
+        - 8700/tcp
+        - 27017/tcp
+        - 27018/tcp
+        - 27019/tcp
+        - 28017/tcp
+        - 8060/tcp
+        - 8081/tcp
+ntp_timezone: Europe/Prague
+
+ntp_manage_config: false
+
+ntp_servers:
+  - "10.10.10.139"
+          
+...

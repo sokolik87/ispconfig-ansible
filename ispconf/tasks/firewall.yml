@@ -1,0 +1,40 @@
+---
+- name: Disable SElinux
+  selinux: state=disabled
+
+- name: Check firewalld installed
+  yum:
+    name: firewalld
+    state: latest
+
+- name: Check firewalld running
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: Enable common services 
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items: "{{ services_enabled }}"
+
+- name: Enable ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items: "{{ ports_enabled }}" 
+
+- name: Prohibit IPv6 systemwide
+  blockinfile:
+    path: /etc/sysctl.conf
+    block: |
+      net.ipv6.conf.all.disable_ipv6 = 1
+      net.ipv6.conf.default.disable_ipv6 = 1
+  notify: restart server
+
+- meta: flush_handlers
+...
+

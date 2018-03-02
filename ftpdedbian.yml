@@ -1,0 +1,301 @@
+---
+- hosts: test 
+  gather_facts: yes
+  tasks:
+   - name: update
+     apt:
+       update_cache: yes
+       upgrade: dist
+   - name: edit sources
+     replace: dest=/etc/apt/sources.list regexp='jessie' replace='stretch' backup=yes
+   - name: upgrade
+     apt:
+       update_cache: yes
+       upgrade: dist
+   - name: edit hostname
+     hostname: 
+      name: ftp
+   - name: editbash
+     file:
+      src: /bin/bash
+      dest: /bin/sh
+      state: link 
+   - name: edit hosts
+     lineinfile:
+      path: /etc/hosts
+      line: "{{ ansible_eth0.ipv4.address }} ftp.antee.cz ftp"     
+   - name: restart machine
+     shell: sleep 2 && shutdown -r now "Ansible updates triggered"
+     async: 1
+     poll: 0
+     sudo: true
+     ignore_errors: true
+   - name: waiting for server to come back
+     local_action: wait_for host={{ inventory_hostname }} state=started delay=30 timeout=300
+     sudo: false
+   - name: edit sources
+     apt_repository:
+      repo: '{{ item }}'
+      state: present
+     with_items: 
+      - deb  http://deb.debian.org/debian stretch main contrib non-free
+      - deb-src  http://deb.debian.org/debian stretch main contrib non-free
+      - deb  http://deb.debian.org/debian stretch-updates main contrib non-free
+      - deb-src  http://deb.debian.org/debian stretch-updates main contrib non-free
+      - deb http://security.debian.org/ stretch/updates main contrib non-free
+      - deb-src http://security.debian.org/ stretch/updates main contrib non-free
+      - deb http://ftp.debian.org/debian stretch-backports main
+   - name: install packages
+     apt: pkg={{ item }} state=latest update_cache=true
+     with_items: 
+        - apache2 
+        - apache2-doc 
+        - apache2-suexec-pristine 
+        - apache2-utils 
+        - apt-listchanges
+        - apt-transport-https 
+        - arj 
+        - autoconf 
+        - binutils
+        - build-essential
+        - bzip2 
+        - cabextract 
+        - clamav 
+        - clamav-daemon 
+        - clamav-docs
+        - curl 
+        - daemon 
+        - dovecot-imapd
+        - dovecot-lmtpd
+        - dovecot-mysql
+        - dovecot-pop3d
+        - dovecot-sieve
+        - getmail4
+        - imagemagick 
+        - libapache2-mod-fcgid 
+        - libapache2-mod-passenger
+        - libapache2-mod-php 
+        - libapache2-mod-python  
+        - libauthen-sasl-perl 
+        - libbz2-dev 
+        - libc-client2007e 
+        - libc-client2007e-dev 
+        - libcurl4-openssl-dev 
+        - libdbd-mysql-perl 
+        - libfcgi0ldbl 
+        - libfcgi-dev 
+        - libfreetype6-dev 
+        - libio-socket-ssl-perl 
+        - libio-string-perl 
+        - libjpeg-dev 
+        - libkrb5-dev 
+        - libmcrypt-dev
+        - libmariadbclient-dev 
+        - libnet-dns-perl 
+        - libnet-ident-perl 
+        - libnet-ldap-perl 
+        - libpng-dev 
+        - libpq-dev 
+        - libruby 
+        - libssl-dev 
+        - libtool
+        - libxml2-dev 
+        - libxslt1-dev
+        - lzop 
+        - mariadb-client
+        - mariadb-server
+        - mcrypt 
+        - memcached 
+        - nano 
+        - nomarch 
+        - ntp
+        - openssl
+        - php-memcache
+        - phpmyadmin 
+        - php-pear
+        - php7.0-cli
+        - php7.0-fpm
+        - postfix
+        - postfix-doc
+        - postfix-mysql
+        - postgrey
+        - pure-ftpd-common 
+        - pure-ftpd-mysql 
+        - python-pip
+        - quota 
+        - quotatool
+        - rkhunter
+        - spamassassin 
+        - sudo
+        - unzip 
+        - ufw
+        - zip 
+        - zlib1g-dev 
+        - zoo 
+     poll: 5
+   - name: pip install
+     pip:
+       name: '{{ item }}'
+     with_items:
+        - pexpect
+        - mysql-connector-python
+        - MySQL-python 
+   - name: download stuff
+     get_url:
+      url: '{{ item }}'
+      dest: /opt 
+      mode: 0777
+     with_items:
+        - http://www.ispconfig.org/downloads/ISPConfig-3.1.4.tar.gz
+        - https://dl.eff.org/certbot-auto
+        - http://agents.backup.cloud.it/agents/Agent-Linux-x64-8.13.5255.tar.gz
+   - name: add aptkey
+     shell: curl https://packages.sury.org/php/apt.gpg | apt-key add -
+   - name: add php to sources
+     apt_repository:
+      repo: deb https://packages.sury.org/php/ stretch main
+      state: present
+   - name: install php5.6
+     apt: pkg={{ item }} state=latest update_cache=true
+     with_items:
+       - php5.6-cli
+       - php5.6-fpm
+   
+   - name: install certbot from backports
+     apt:
+        pkg: python-certbot-apache
+        default_release: stretch-backports
+        state: latest
+   - name: start maria
+     service: name=mariadb state=started
+   - name: create my.cnf
+     file:
+      path: /root/.my.cnf
+      state: touch
+   - name: insert headers to hosts
+     blockinfile:
+      path: /root/.my.cnf
+      block: |
+       [client]
+       user=root
+       password=
+   - name: Sets the root password
+     mysql_user: user=root password=tesTovaci-123 host=localhost
+   - name: insert password to mysql
+     lineinfile:
+      dest: /root/.my.cnf
+      regexp: '^password='
+      line: 'password=Wkrs6ap'
+   - name: Delete anonymous MySQL server user for localhost
+     mysql_user: user="" state=absent
+   - name: Secure the MySQL root user for IPV6 localhost (::1)
+     mysql_user: user="root" password=tesTovaci-123 host="::1"
+   - name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
+     mysql_user: user="root" password=tesTovaci-123 host="127.0.0.1"
+   - name: Secures the MySQL root user for localhost domain (localhost)
+     mysql_user: user="root" password=tesTovaci-123 host="localhost"
+   - name: Secures the MySQL root user for server_hostname domain
+     mysql_user: user="root" password=tesTovaci-123 host=db
+   - name: edit maria conf
+     shell: echo 'skip-networking' >> /etc/my.conf
+   - name: edit maria conf1
+     shell: echo 'bind-address = 0.0.0.0' >> /etc/my.conf
+   - name: Create a database
+     mysql_db: name=test collation=utf8_general_ci encoding=utf8 state=present
+   - name: restart maria
+     service: name=mariadb state=restarted
+   - name: stop spamassassin
+     service: name=spamassassin state=stopped
+   - name: disable spamassassin
+     shell: systemctl disable spamassassin
+   - name: configure apache
+     shell: a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers
+   - name: edit apache config
+     lineinfile:
+      path: /etc/apache2/apache2.conf
+      line: RequestHeader unset Proxy early
+   - name: restart apache
+     service: name=apache2 state=restarted
+   - name: extract archives
+     unarchive:
+      src: '{{ item }}'
+      dest: /opt
+      remote_src: yes
+     with_items: 
+      - /opt/Agent-Linux-x64-8.13.5255.tar.gz
+      - /opt/ISPConfig-3.1.4.tar.gz
+   - name: make link
+     file:
+      src: /usr/lib/x86_64-linux-gnu/libc-client.a
+      dest: /usr/lib/libc-client.a
+   - name: copy postfix conf
+     blockinfile:
+      path: /etc/postfix/master.cf
+      insertafter: "submission"
+      content: |
+        submission inet n - - - - smtpd
+         -o syslog_name=postfix/submission
+         -o smtpd_tls_security_level=encrypt
+         -o smtpd_sasl_auth_enable=yes
+         -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+        smtps inet n - - - - smtpd
+         -o syslog_name=postfix/smtps
+         -o smtpd_tls_wrappermode=yes
+         -o smtpd_sasl_auth_enable=yes
+         -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+   - name: restart postfix
+     service: name=postfix state=restarted
+   - name: edit pureftpd conf
+     lineinfile:
+       path: /etc/default/pure-ftpd-common
+       regexp: '^VIRTUALCHROOT='
+       line: 'VIRTUALCHROOT=true'
+   - name: enable pureftpd TLS
+     lineinfile:
+       path: /etc/pure-ftpd/conf/TLS
+       create: yes
+       line: 1
+       state: present
+   - name: create certifice dir
+     file:
+      path: /etc/ssl/private/
+      state: directory
+   - name: generate SSL certificate
+     command: openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
+   - name: change permissions to cert
+     file: 
+      path: /etc/ssl/private/pure-ftpd.pem
+      mode: 0600
+   - name: restart pureftpd
+     service: name=pure-ftpd-mysql state=restarted
+   - name: create fail2ban monitor
+     blockinfile:
+      path: /etc/fail2ban/jail.local
+      create: yes
+      block: |
+        [pure-ftpd]
+        enabled = true
+        port = ftp
+        filter = pure-ftpd
+        logpath = /var/log/syslog
+        maxretry = 3
+
+        [dovecot]
+        enabled = true
+        filter = dovecot
+        ogpath = /var/log/mail.log
+        maxretry = 5
+
+        [postfix-sasl]
+        enabled = true
+        port = smtp
+        filter = postfix-sasl
+        logpath = /var/log/mail.log
+        maxretry = 3
+   - name: restart fail2ban
+     service: name=fail2ban state=restarted
+   - name: install ispconfig
+     shell: bash -c 'cd /opt/ISPConfig-3.1.4/install && php install.php --autoinstall=autoinstall.ini | tee -i autoinstall.log'
+     when: ispconfig_installed|failed
+...
+
