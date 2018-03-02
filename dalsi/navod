@@ -1,0 +1,8 @@
+je potřeba zadat v adresáři kde se nachází soubor rein.py:
+
+~$: python2 rein.py -p Engramo-test 
+
+a pak jen počkat až se scrip dokončí. Může to trvat i 10 minut. poznáš to jednoduše pingem
+pak máš server v původním stavu
+
+
