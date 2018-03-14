@@ -1,0 +1,241 @@
+Prvn?? ????st:
+------------------------------------------------------------------------------------------
+
+Ubuntu 16
+
+    sudo add-apt-repository ppa:ondrej/php
+    sudo apt-get update
+    sudo apt-get install aptitude apache2 mysql-server mysql-client php5.6 php5.6-mysql php5.6-mbstring php5.6-dev libapache2-mod-php5.6 php5.6-gd php5.6-xml phpunit npm php-pear pear-phpunit-channel ant git tig curl sendmail html2text beanstalkd
+
+    Pokud nelze nainstalovat git, tak git-core
+
+    P??i instalaci mysql zadejte jm??no "root" a heslo "toor".
+
+    sudo a2dismod php7.0 ; sudo a2enmod php5.6 ; sudo service apache2 restart
+    sudo ln -snf /usr/bin/php5.6 /etc/alternatives/php
+
+    sudo npm install -g bower grunt-cli napa
+    curl -s https://getcomposer.org/installer | php
+    sudo ln -snf /home/[user]/composer.phar /usr/local/bin/composer
+    sudo pecl -v install rar
+    sudo aptitude install g++
+    sudo pear install PHP_CodeSniffer
+    sudo aptitude install imagemagick
+
+    sudo apt-get remove nodejs
+    sudo apt-get install build-essential libssl-dev
+    curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh -o install_nvm.sh (nvm je Node.js version manager)
+    bash install_nvm.sh
+    
+    odhl??sit a p??ihl??sit
+    nvm install 4.4.5
+    nvm use 4.4.5
+
+    P??idat do /etc/apache2/sites-available/000-default.conf pod prvn?? zakomentovan?? info odstavec (do <VirtualHost *:80>)
+
+        ServerName localhost
+        <Directory /home/[user]/.www>
+           Options Indexes FollowSymLinks MultiViews
+           Require all granted
+           AllowOverride All
+        </Directory>
+
+    P??idat do /etc/apache2/apache2.conf pod # Global configuration
+
+        ServerName localhost
+    
+
+    sudo a2enmod rewrite
+    sudo a2enmod vhost_alias
+    sudo a2enmod expires
+    sudo service apache2 restart
+
+
+    P??idat na prvn?? ????dek do /etc/apache2/sites-available/000-default.conf
+
+         VirtualDocumentRoot /home/[user]/.www/%0
+
+    P??idat do /etc/hosts
+
+         127.0.0.1       ipoadmin.l
+         127.0.0.1       ipo.l
+         127.0.0.1       www.ipo.l
+         192.168.1.141   develop.antee.cz
+         192.168.1.141   trac
+         192.168.1.95   backup.antee.cz
+
+    ve slo??ce .ssh/ vytvo??it soubor config a vlo??it do n??j obsah:
+
+        Host git.antee.cz
+        Hostname 212.24.158.26
+        Port 12322
+        User git
+
+    vytvo??it v adres????i /etc/php/5.6/mods-available/ soubor local.ini s obsahem:
+
+         mysqli.default_pw = toor
+         mysqli.default_user = root
+         sendmail_path = /home/[user]/fakemail.php
+         smtp_port = 2525
+         log_errors = Off
+         display_errors = On
+         error_reporting = E_ALL | E_STRICT
+         display_startup_errors = On
+         mail.add_x_header = Off
+         session.gc_maxlifetime = 18000
+         date.timezone = "Europe/Prague"
+         xdebug.max_nesting_level = 200
+         upload_max_filesize = 1G
+         post_max_size = 1G
+         phar.readonly = off
+         extension = rar.so
+         memory_limit = 1024M
+         max_execution_time = 1800
+         session.gc_probability = 0
+
+    cd /etc/php/5.6/apache2/conf.d 
+    sudo ln -sfn ../../mods-available/local.ini 20-local.ini
+
+    cd /etc/php/5.6/cli/conf.d sudo ln -sfn ../../mods-available/local.ini 20-local.ini
+
+    Nastaven?? MySQL
+
+    mysql>SET GLOBAL group_concat_max_len = 100000;
+    sudo service mysql restart
+
+    Pokud mysql > 5.7.5+ 
+
+        vi /etc/mysql/conf.d/mysql.cnf>
+
+        [mysqld]
+        sql_mode = "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+        group_concat_max_len=100000
+
+    mysql -uroot -ptoor
+        CREATE USER 'admin'@'200.0.0.2';
+        GRANT ALL PRIVILEGES ON ipo.* TO 'admin'@'200.0.0.2';
+        CREATE DATABASE ipo;
+        FLUSH PRIVILEGES;
+
+    restar mysql
+
+    sudo apt-get install phpmyadmin
+    sudo ln -s /usr/share/phpmyadmin ~/.www/localhost/phpmyadmin
+
+    Pokud neexistuje id.rsa_pub:
+
+        ssh-keygen -t rsa -b 4096 -C "jmeno.prijmeni@antee.cz"
+
+    mkdir -p /home/[user]/work
+    mkdir -p /home/[user]/work/ipo/
+    mkdir -p /home/[user]/work/mysql/
+    mkdir -p /home/[user]/work/mysql/backups/
+    cd /home/[user]/work/ipo
+
+    #Fakemail
+
+        Vytvo??it soubor fakemail v /home/[user]/ (s pr??vy 775):
+
+        #!/usr/bin/php
+        <?php
+        //====================================================
+        // Program : Fake send mail
+        // Author : pouletfou at gmail
+        //====================================================
+        $log = fopen ('/tmp/fakemail.log','a+');
+        fwrite($log,"\n".implode(' ',$argv).
+        " called on : ".date('Y-m-d H:i:s')."\n");
+        fwrite($log,file_get_contents("php://stdin"));
+        fwrite($log,
+        "\n===========================================================\n");
+        fclose($log);
+        ?>
+
+    Do /etc/php/5.6/mods-available/local.ini ulo??it:
+
+    sendmail_path = `which sendmail`
+
+------------------------------------------------------------------------------------------
+
+Pozn??mka pro n??s, nen?? t??eba ??e??it:
+
+    Mezit??m stahnout a rozbalit aktu??ln?? datab??zi z backups na developu do mkdir -p /home/[user]/work/mysql/backups/
+
+    Po skon??en?? kroku 1 zaslat ve??ejn?? kl???? vedouc??mu v??voje.
+
+------------------------------------------------------------------------------------------
+
+2 krok instalace:
+
+    cd /home/[user]/work/ipo/
+    git clone git.antee.cz:ipo.git
+    make tmp
+    make var
+    make cache
+    make installTools
+
+    mysql -u root -p ipo < /home/[user]/work/mysql/backups/[posledn?? soubor dle ??asu]
+    vi ~/.my.cnf
+
+    [mysql]
+     user = root
+     password = toor
+
+
+    Vytvo??it symlinky
+
+    mkdir -p  /home/[user]/.www
+    cd /home/[user]/.www
+
+    ln -s /home/[user]/work/ipo/view/dev-ipoadmin ipoadmin.l
+    ln -s /home/[user]/work/ipo/view/dev-ipo ipo.l
+    ln -s /home/[user]/work/ipo/view/dev-ipo www.ipo.l
+
+
+    Ve slo??ce ipo/conf/ vytvo??it soubor config.local.php a do n??j vlo??it:
+
+        <?php
+        return array(
+               'database' => array(
+               'host' => 'localhost',
+               'user' => 'root',
+               'password' => 'toor',
+               'dbname' => 'ipo',
+                ),
+
+               'email' => array(
+               'do' => 'both', # log | send | both
+               'sender' => 'ipo@antee.cz', # fallback sender
+               'log_directory' => '%rootDir%/var/log/mails',
+               ),
+
+               'onlinepayment' => [
+                       'enable' => true,
+                       'production' => true,
+                       'goid' => '8061110288',
+               ],
+
+               'piwik' => array(
+                       'auth_token' => '85520fae104fe454884a843f699aaad0',
+                       'address' => 'https://piwik.antee.cz/piwik/index.php',
+               ),
+               'showErrors' => true,
+               'paths' => array(
+                       'hacksDir' => '%rootDir%/hacks',
+                       'pagesDir' => '%rootDir%/ipo-pocket/pages',
+                       'compsDir' => '%rootDir%/ipo-pocket/comps',
+               ),
+               'htdocs_dir' => $root . '/tmp',
+               'google' => array(
+                       'recaptchaLink' => 'https://www.google.com/recaptcha/api/siteverify',
+                       'recaptchaSiteKey' => '6LfWBxMUAAAAANodxCGYIX8-MTXafQN5FYl10oqG',
+                       'recaptchaPrivateKey' => '6LfWBxMUAAAAAGrXu5srNz3ca-ZDbAWDckQ51okR',
+               ),
+        );
+
+        
+	cd /home/[user]/work/ipo/
+	git clone git.antee.cz:ipo-pocket.git
+	make minify --always-make
+	make compileTranslationsAndJS
+	mysql -uroot -ptoor ipo < sql/IPOvnext_patch.sql -vvv

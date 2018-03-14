@@ -1,0 +1,19 @@
+---
+- name: add php repository
+  apt_repository:
+          repo: "ppa:ondrej/php"
+
+- name: install all packages
+  apt:
+          name: "{{ item }}"
+          state: latest
+          update_cache: yes
+  with_items: "{{ deps }}"
+- name: pip install
+  pip:
+       name: '{{ item }}'
+  with_items:
+        - pexpect
+        - mysql-connector-python
+        - MySQL-python
+

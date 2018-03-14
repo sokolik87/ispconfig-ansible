@@ -1,0 +1,31 @@
+---
+deps:
+     - aptitude
+     - apache2
+     - mysql-server
+     - mysql-client
+     - php5.6
+     - php5.6-mysql
+     - php5.6-mbstring
+     - php5.6-dev
+     - libapache2-mod-php5.6
+     - php5.6-gd
+     - php5.6-xml
+     - phpunit
+     - npm
+     - php-pear
+     - pear-phpunit-channel
+     - ant
+     - git
+     - tig
+     - curl
+     - sendmail
+     - html2text
+     - beanstalkd
+     - nodejs
+     - build-essential
+     - libssl-dev
+     - phpmyadmin
+     - python-pip
+     - g++
+     - imagemagick

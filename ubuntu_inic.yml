@@ -1,0 +1,6 @@
+---
+- hosts: ubuntu_inic 
+  remote_user:  root
+  roles:
+    - ubuntu_inic
+...

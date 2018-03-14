@@ -1,2 +1,2 @@
 [ispconf]
-ve.rej.na.ip ansible_ssh_pass=mojetajneheslo
+195.181.211.133 ansible_ssh_port=5522
