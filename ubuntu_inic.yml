@@ -1,6 +1,12 @@
 ---
 - hosts: ubuntu_inic 
   remote_user:  root
+   vars_prompt:
+     - name: "mysql_password"
+       prompt: "Set mysql-wide password "
+       default: "toor"
+       private: yes
+
   roles:
     - ubuntu_inic
 ...

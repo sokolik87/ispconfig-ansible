@@ -1,0 +1,69 @@
+---
+- name: stop mysql
+  systemd:
+          name: mysql
+          state: stopped
+          enabled: yes
+
+- name: create my.cnf
+  file:
+     path: /root/.my.cnf
+     state: touch
+- name: insert headers to hosts
+  blockinfile:
+      path: /root/.my.cnf
+      block: |
+       [client]
+       user=root
+       password=
+- name: Sets the root password
+  mysql_user: 
+       user: root 
+       password: "{{ mysql_password }}" 
+       host: localhost
+- name: insert password to mysql
+  lineinfile:
+     dest: /root/.my.cnf
+     regexp: '^password='
+     line: "password={{mysql_passwod}}"
+- name: Delete anonymous MySQL server user for localhost
+  mysql_user: user="" state=absent
+- name: Secure the MySQL root user for IPV6 localhost (::1)
+  mysql_user: 
+      user: "root" 
+      password: "{{ mysql_password }}" 
+      host: "::1"
+- name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
+  mysql_user: 
+      user: "root" 
+      password: "{{ mysql_password }}" 
+      host: "127.0.0.1"
+- name: Secures the MySQL root user for localhost domain (localhost)
+  mysql_user: 
+      user: "root" 
+      password: "{{ mysql_password }}" 
+      host: "localhost"
+- name: Secures the MySQL root user for server_hostname domain
+  mysql_user: 
+      user: "root" 
+      password: "{{ mysql_password }}" 
+      host: db
+- name: edit mysql conf
+  lineinfile:
+          path: /etc/my.conf
+          line: 'skip-networking'
+          state: present     
+- name: edit mysql conf1
+  lineinfile: 
+          path: /etc/my.conf
+          line: 'bind-address = 0.0.0.0'
+          state: present
+- name: Create a database
+  mysql_db: name=test collation=utf8_general_ci encoding=utf8 state=present
+
+- name: start mysql
+  systemd:
+          name: mysql
+          state: restarted
+          enabled: yes
+
