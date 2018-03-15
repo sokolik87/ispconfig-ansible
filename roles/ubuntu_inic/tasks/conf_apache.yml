@@ -39,6 +39,12 @@
     state: present
   notify: restart apache
     
+- name: edit apache sites available
+  lineinfile: 
+    path: /etc/apache2/sites-available/000-default.conf
+    line: VirtualDocumentRoot /home/"{{ new_sys_user }}"/.www/%0
+    state: present
+    insertbefore: BOF
 
   
 ...

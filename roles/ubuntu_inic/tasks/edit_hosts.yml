@@ -1,0 +1,26 @@
+---
+
+- name: edit /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+         127.0.0.1       ipoadmin.l
+         127.0.0.1       ipo.l
+         127.0.0.1       www.ipo.l
+         192.168.1.141   develop.antee.cz
+         192.168.1.141   trac
+         192.168.1.95   backup.antee.cz
+    state: present
+    
+- name: create and edit .ssh/
+  blockinfile:
+    path: .ssh/config
+    block: |
+        Host git.antee.cz
+        Hostname 212.24.158.26
+        Port 12322
+        User git
+    state: present
+    create: yes
+    
+...
