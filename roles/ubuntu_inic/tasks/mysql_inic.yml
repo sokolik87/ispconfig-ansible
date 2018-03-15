@@ -50,23 +50,8 @@
       host: db
 - name: Create a database
   mysql_db: name=test collation=utf8_general_ci encoding=utf8 state=present
-notify: restart mysql
+  notify: restart mysql
   
-- name: create local.ini
-  template:
-    src: local.ini.j2
-    dest: /etc/php/5.6/mods-available/local.ini
-    
-- name: symlink local.ini
-  file:
-    src: /etc/php/5.6/mods-available/local.ini
-    dest: "{{ item }}"
-    state: link
-    force: yes
-  with_items: 
-    - /etc/php/5.6/apache2/conf.d/20-local.ini
-    - /etc/php/5.6/cli/conf.d/20-local.ini
-    
 - name: set group concat variable
   mysql_variables: 
     variable: group_concat_max_len

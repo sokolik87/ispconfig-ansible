@@ -12,9 +12,14 @@
          192.168.1.95   backup.antee.cz
     state: present
     
+- name: create .ssh dir
+  file:
+          path: "/home/{{ new_sys_user }}/.ssh"
+          state: directory
+
 - name: create and edit .ssh/
   blockinfile:
-    path: .ssh/config
+    path: "/home/{{ new_sys_user }}/.ssh/config"
     block: |
         Host git.antee.cz
         Hostname 212.24.158.26

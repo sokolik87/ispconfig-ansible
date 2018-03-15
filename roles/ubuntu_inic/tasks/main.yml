@@ -1,4 +1,19 @@
 ---
+- name: create group
+  group:
+          name: "{{ new_sys_user }}"
+          state: present 
+- name: create new user
+  user:
+          name: "{{ new_sys_user }}"
+          createhome: yes
+          generate_ssh_key: yes
+          group: "{{ new_sys_user }}"
+          groups: users, sudo
+          shell: /bin/bash
+          system: yes
+          update_password: on_create
+
 - name: add php repository
   apt_repository:
           repo: "ppa:ondrej/php"
@@ -36,25 +51,10 @@
   command: ssh-keygen -t rsa -b 4096 -C "{{ new_sys_user }}@antee.cz"
   
 - name: fakemail setup
-  blockinfile:
-  path: /home/{{ new_sys_user }}
-  create: yes
-  mode: 0775
-  block: |
-        #!/usr/bin/php
-        <?php
-        //====================================================
-        // Program : Fake send mail
-        // Author : pouletfou at gmail
-        //====================================================
-        $log = fopen ('/tmp/fakemail.log','a+');
-        fwrite($log,"\n".implode(' ',$argv).
-        " called on : ".date('Y-m-d H:i:s')."\n");
-        fwrite($log,file_get_contents("php://stdin"));
-        fwrite($log,
-        "\n===========================================================\n");
-        fclose($log);
-        ?>
-
-
+  copy:
+    src: fakemail 
+    dest: /home/{{ new_sys_user }}/fakemail
+    mode: 0775
+    owner: "{{ new_sys_user }}"
+    group: "{{ new_sys_user }}"
 ...

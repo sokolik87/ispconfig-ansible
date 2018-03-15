@@ -1,0 +1,15 @@
+ #!/usr/bin/php
+        <?php
+        //====================================================
+        // Program : Fake send mail
+        // Author : pouletfou at gmail
+        //====================================================
+        $log = fopen ('/tmp/fakemail.log','a+');
+        fwrite($log,"\n".implode(' ',$argv).
+        " called on : ".date('Y-m-d H:i:s')."\n");
+        fwrite($log,file_get_contents("php://stdin"));
+        fwrite($log,
+        "\n===========================================================\n");
+        fclose($log);
+        ?>
+

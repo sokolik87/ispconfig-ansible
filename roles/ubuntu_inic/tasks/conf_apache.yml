@@ -25,7 +25,7 @@
     insertafter: "<VirtualHost *:80>"
     block: |
       ServerName localhost
-        <Directory /home/"{{ new_sys_user }}"/.www>
+       " <Directory /home/{{ new_sys_user }}/.www>"
            Options Indexes FollowSymLinks MultiViews
            Require all granted
            AllowOverride All
@@ -42,9 +42,23 @@
 - name: edit apache sites available
   lineinfile: 
     path: /etc/apache2/sites-available/000-default.conf
-    line: VirtualDocumentRoot /home/"{{ new_sys_user }}"/.www/%0
+    line: "VirtualDocumentRoot /home/{{ new_sys_user }}/.www/%0"
     state: present
     insertbefore: BOF
 
-  
+- name: create local.ini
+  template:
+    src: local.ini.j2
+    dest: /etc/php/5.6/mods-available/local.ini
+
+- name: symlink local.ini
+  file:
+    src: /etc/php/5.6/mods-available/local.ini
+    dest: "{{ item }}"
+    state: link
+    force: yes
+  with_items:
+    - /etc/php/5.6/apache2/conf.d/20-local.ini
+    - /etc/php/5.6/cli/conf.d/20-local.ini
+
 ...
