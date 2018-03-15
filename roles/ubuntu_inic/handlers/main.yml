@@ -5,3 +5,11 @@
     name: apache2
     state: restarted
     enabled: yes
+    
+- name: restart mysql
+  systemd:
+          name: mysql
+          state: restarted
+          enabled: yes
+          
+...

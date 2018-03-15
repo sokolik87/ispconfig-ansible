@@ -1,0 +1,21 @@
+         mysqli.default_pw = "{{ mysql_password }}"
+         mysqli.default_user = root
+         sendmail_path = /home/"{{ new_sys_user }}"/fakemail.php
+         smtp_port = 2525
+         log_errors = Off
+         display_errors = On
+         error_reporting = E_ALL | E_STRICT
+         display_startup_errors = On
+         mail.add_x_header = Off
+         session.gc_maxlifetime = 18000
+         date.timezone = "Europe/Prague"
+         xdebug.max_nesting_level = 200
+         upload_max_filesize = 1G
+         post_max_size = 1G
+         phar.readonly = off
+         extension = rar.so
+         memory_limit = 1024M
+         max_execution_time = 1800
+         session.gc_probability = 0
+         
+    sendmail_path = `which sendmail`

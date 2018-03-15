@@ -22,4 +22,39 @@
 - include_tasks: conf_apache.yml
 
 - include_tasks: npm_install.yml
+
+- include_tasks: edit_hosts.yml
+
+- name: symlink phpmyadmin
+  file:
+    src: /usr/share/phpmyadmin
+    dest: ~/.www/localhost/phpmyadmin
+    state: link
+    force: yes
+    
+- name: generate SSl certificate
+  command: ssh-keygen -t rsa -b 4096 -C "{{ new_sys_user }}@antee.cz"
+  
+- name: fakemail setup
+  blockinfile:
+  path: /home/{{ new_sys_user }}
+  create: yes
+  mode: 0775
+  block: |
+        #!/usr/bin/php
+        <?php
+        //====================================================
+        // Program : Fake send mail
+        // Author : pouletfou at gmail
+        //====================================================
+        $log = fopen ('/tmp/fakemail.log','a+');
+        fwrite($log,"\n".implode(' ',$argv).
+        " called on : ".date('Y-m-d H:i:s')."\n");
+        fwrite($log,file_get_contents("php://stdin"));
+        fwrite($log,
+        "\n===========================================================\n");
+        fclose($log);
+        ?>
+
+
 ...
