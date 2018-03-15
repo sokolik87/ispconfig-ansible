@@ -2,7 +2,7 @@
 - name: restart mysql
   systemd:
           name: mysql
-          state: restarted 
+          state: started 
           enabled: yes
 
 - name: create my.cnf
@@ -48,16 +48,6 @@
       user: "root" 
       password: "{{ mysql_password }}" 
       host: db
-- name: edit mysql conf
-  lineinfile:
-          path: /etc/my.conf
-          line: 'skip-networking'
-          state: present     
-- name: edit mysql conf1
-  lineinfile: 
-          path: /etc/my.conf
-          line: 'bind-address = 0.0.0.0'
-          state: present
 - name: Create a database
   mysql_db: name=test collation=utf8_general_ci encoding=utf8 state=present
 

@@ -38,6 +38,6 @@ enabled_apache_modules:
      - expires
 
 npm_packages:
-        - bowewr
+        - bower
         - grunt-cli
         - napa
