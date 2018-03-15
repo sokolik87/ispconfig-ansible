@@ -1,0 +1,23 @@
+---
+- name: install global packages
+  npm:
+          name: "{{ item }}"
+          global: yes
+  with_items: "{{ npm_packages }}"
+
+- name: Set php_executable variable to a default if not defined.
+  set_fact:
+    php_executable: php
+  when: php_executable is not defined
+
+- name: Download Composer installer.
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /opt/composer-installer.php
+    mode: 0755
+
+- name: Run Composer installer.
+  command: >
+    {{ php_executable }} composer-installer.php 
+  args:
+          chdir: /opt

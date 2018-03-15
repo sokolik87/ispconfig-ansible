@@ -21,4 +21,5 @@
 
 - include_tasks: conf_apache.yml
 
+- include_tasks: npm_install.yml
 ...

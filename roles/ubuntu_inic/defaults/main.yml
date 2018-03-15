@@ -9,6 +9,7 @@ deps:
      - php5.6-mbstring
      - php5.6-dev
      - libapache2-mod-php5.6
+     - libmysqlclient-dev
      - php5.6-gd
      - php5.6-xml
      - phpunit
@@ -35,3 +36,8 @@ enabled_apache_modules:
      - rewrite
      - vhost_alias
      - expires
+
+npm_packages:
+        - bowewr
+        - grunt-cli
+        - napa

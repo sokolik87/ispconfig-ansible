@@ -1,7 +1,7 @@
 ---
-- hosts: ubuntu_inic 
+- hosts: antee-test-local 
   remote_user:  root
-   vars_prompt:
+  vars_prompt:
      - name: "mysql_password"
        prompt: "Set mysql-wide password "
        default: "toor"
