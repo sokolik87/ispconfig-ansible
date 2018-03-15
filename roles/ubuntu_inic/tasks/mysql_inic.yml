@@ -1,8 +1,8 @@
 ---
-- name: stop mysql
+- name: restart mysql
   systemd:
           name: mysql
-          state: stopped
+          state: restarted 
           enabled: yes
 
 - name: create my.cnf
@@ -15,7 +15,7 @@
       block: |
        [client]
        user=root
-       password=
+       password={{ mysql_password }}
 - name: Sets the root password
   mysql_user: 
        user: root 
@@ -25,7 +25,7 @@
   lineinfile:
      dest: /root/.my.cnf
      regexp: '^password='
-     line: "password={{mysql_passwod}}"
+     line: "password={{mysql_password}}"
 - name: Delete anonymous MySQL server user for localhost
   mysql_user: user="" state=absent
 - name: Secure the MySQL root user for IPV6 localhost (::1)
