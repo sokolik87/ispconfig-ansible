@@ -1,0 +1,30 @@
+---
+
+   - name: create fail2ban monitor
+     blockinfile:
+      path: /etc/fail2ban/jail.local
+      create: yes
+      block: |
+        [pure-ftpd]
+        enabled = true
+        port = ftp
+        filter = pure-ftpd
+        logpath = /var/log/syslog
+        maxretry = 3
+
+        [dovecot]
+        enabled = true
+        filter = dovecot
+        ogpath = /var/log/mail.log
+        maxretry = 5
+
+        [postfix-sasl]
+        enabled = true
+        port = smtp
+        filter = postfix-sasl
+        logpath = /var/log/mail.log
+        maxretry = 3
+   - name: restart fail2ban
+     service: name=fail2ban state=restarted
+
+...

@@ -6,6 +6,10 @@
        prompt: "Set mysql-wide password "
        default: "toor"
        private: yes
+     - name: "new_sys_user"
+       prompt: "Set name of new system user "
+       default: "franta"
+       private: no
 
   roles:
     - ubuntu_inic

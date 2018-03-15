@@ -16,4 +16,9 @@
         - pexpect
         - mysql-connector-python
         - MySQL-python
+       
+- include_tasks: mysql_inic.yml
 
+- include_tasks: conf_apache.yml
+
+...

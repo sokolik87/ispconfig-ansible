@@ -17,5 +17,116 @@ ntp_manage_config: false
 
 ntp_servers:
   - "10.10.10.139"
+  
+sources:
+      - deb  http://deb.debian.org/debian stretch main contrib non-free
+      - deb-src  http://deb.debian.org/debian stretch main contrib non-free
+      - deb  http://deb.debian.org/debian stretch-updates main contrib non-free
+      - deb-src  http://deb.debian.org/debian stretch-updates main contrib non-free
+      - deb http://security.debian.org/ stretch/updates main contrib non-free
+      - deb-src http://security.debian.org/ stretch/updates main contrib non-free
+      
+packages:
+        - apache2 
+        - apache2-doc 
+        - apache2-suexec-pristine 
+        - apache2-utils 
+        - apt-listchanges
+        - apt-transport-https 
+        - arj 
+        - autoconf 
+        - binutils
+        - build-essential
+        - bzip2 
+        - cabextract 
+        - clamav 
+        - clamav-daemon 
+        - clamav-docs
+        - curl 
+        - daemon 
+        - dovecot-imapd
+        - dovecot-lmtpd
+        - dovecot-mysql
+        - dovecot-pop3d
+        - dovecot-sieve
+        - getmail4
+        - imagemagick 
+        - libapache2-mod-fcgid 
+        - libapache2-mod-passenger
+        - libapache2-mod-php 
+        - libapache2-mod-python  
+        - libauthen-sasl-perl 
+        - libbz2-dev 
+        - libc-client2007e 
+        - libc-client2007e-dev 
+        - libcurl4-openssl-dev 
+        - libdbd-mysql-perl 
+        - libfcgi0ldbl 
+        - libfcgi-dev 
+        - libfreetype6-dev 
+        - libio-socket-ssl-perl 
+        - libio-string-perl 
+        - libjpeg-dev 
+        - libkrb5-dev 
+        - libmcrypt-dev
+        - libmariadbclient-dev 
+        - libnet-dns-perl 
+        - libnet-ident-perl 
+        - libnet-ldap-perl 
+        - libpng-dev 
+        - libpq-dev 
+        - libruby 
+        - libssl-dev 
+        - libtool
+        - libxml2-dev 
+        - libxslt1-dev
+        - lzop 
+        - mariadb-client
+        - mariadb-server
+        - mcrypt 
+        - memcached 
+        - nano 
+        - nomarch 
+        - ntp
+        - openssl
+        - php-memcache
+        - phpmyadmin 
+        - php-pear
+        - php7.0-cli
+        - php7.0-fpm
+        - postfix
+        - postfix-doc
+        - postfix-mysql
+        - postgrey
+        - pure-ftpd-common 
+        - pure-ftpd-mysql 
+        - python-pip
+        - quota 
+        - quotatool
+        - rkhunter
+        - spamassassin 
+        - sudo
+        - unzip 
+        - ufw
+        - zip 
+        - zlib1g-dev 
+        - zoo 
+        
+pip_packages:
+        - pexpect
+        - mysql-connector-python
+        - MySQL-python 
+        
+downloads:
+        - http://www.ispconfig.org/downloads/ISPConfig-3.1.11.tar.gz
+#        - https://dl.eff.org/certbot-auto
+        - http://agents.backup.cloud.it/agents/Agent-Linux-x64-8.13.5255.tar.gz
+        
+php_inst:
+       - php5.6-cli
+       - php5.6-fpm
+       
+ssl_cert:
+       - { country: CZ, county: Cechy, city: Kladno, unitname: IT, commonname: foobar, }
           
 ...

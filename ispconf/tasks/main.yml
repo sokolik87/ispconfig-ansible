@@ -1,0 +1,46 @@
+---
+
+   - name: create certifice dir
+     file:
+      path: /etc/ssl/private/
+      state: directory
+   - name: generate SSL certificate
+     command: openssl req -x509 -nodes -subj "/C={{item.country}}/ST={{item.county}}/L={{item.city}}/OU={{item.unitname}}/CN={{item.commonname}}}}" -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
+     with_items: "{{ ssl_cert }}"
+
+   - include_tasks: ntp_slave.yml
+   
+   - include_tasks: update_jessie.yml
+   
+#      - name: download stuff
+#     get_url:
+#      url: '{{ item }}'
+#      dest: /opt 
+#      mode: 0777
+#     with_items:
+#      - '{{ downloads }}'
+      
+   - name: download and extract archives
+     unarchive:
+      src: '{{ item }}'
+      dest: /opt
+      remote_src: yes
+     with_items: 
+      - '{{ downloads }}'
+          
+   - include_tasks: inst_pckg.yml
+   
+   - include_tasks: maria_setup.yml
+   
+   - include_tasks: apache_setup.yml
+   
+   - include_tasks: postfix_setup.yml
+   
+   - include_tasks: pureftpd_setup.yml
+   
+   - include_tasks: fail2ban_setup.yml       
+     
+   - name: install ispconfig
+     shell: bash -c 'cd /opt/ISPConfig-3.1.4/install && php install.php --autoinstall=autoinstall.ini | tee -i autoinstall.log'
+     when: ispconfig_installed|failed
+...

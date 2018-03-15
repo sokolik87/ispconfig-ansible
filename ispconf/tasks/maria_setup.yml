@@ -1,0 +1,46 @@
+---
+#   - name: check latest inst of mysql
+#     package: 
+#      name: !mariadb(mysqlneco)!
+#      state: latest
+       
+   - name: start maria
+     service: name=mariadb state=started
+   - name: create my.cnf
+     file:
+      path: /root/.my.cnf
+      state: touch
+   - name: insert headers to hosts
+     blockinfile:
+      path: /root/.my.cnf
+      block: |
+       [client]
+       user=root
+       password=
+   - name: Sets the root password
+     mysql_user: user=root password=tesTovaci-123 host=localhost
+   - name: insert password to mysql
+     lineinfile:
+      dest: /root/.my.cnf
+      regexp: '^password='
+      line: 'password=Wkrs6ap'
+   - name: Delete anonymous MySQL server user for localhost
+     mysql_user: user="" state=absent
+   - name: Secure the MySQL root user for IPV6 localhost (::1)
+     mysql_user: user="root" password=tesTovaci-123 host="::1"
+   - name: Secures the MySQL root user for IPV4 localhost (127.0.0.1)
+     mysql_user: user="root" password=tesTovaci-123 host="127.0.0.1"
+   - name: Secures the MySQL root user for localhost domain (localhost)
+     mysql_user: user="root" password=tesTovaci-123 host="localhost"
+   - name: Secures the MySQL root user for server_hostname domain
+     mysql_user: user="root" password=tesTovaci-123 host=db
+   - name: edit maria conf
+     shell: echo 'skip-networking' >> /etc/my.conf
+   - name: edit maria conf1
+     shell: echo 'bind-address = 0.0.0.0' >> /etc/my.conf
+   - name: Create a database
+     mysql_db: name=test collation=utf8_general_ci encoding=utf8 state=present
+   - name: restart maria
+     service: name=mariadb state=restarted
+
+...

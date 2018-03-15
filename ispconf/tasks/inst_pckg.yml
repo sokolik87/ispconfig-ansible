@@ -1,0 +1,35 @@
+---
+   
+   - name: edit sources
+     apt_repository:
+      repo: '{{ item }}'
+      state: present
+     with_items: 
+      - '{{ sources }}'
+   
+   - name: install packages
+     apt: pkg={{ item }} state=latest update_cache=true
+     with_items: 
+      - '{{ packages }}'
+     poll: 5
+     
+   - name: pip install
+     pip:
+       name: '{{ item }}'
+     with_items:
+      - '{{ pip_packages }}'
+        
+   - name: add aptkey
+     shell: curl https://packages.sury.org/php/apt.gpg | apt-key add -
+     
+   - name: add php to sources
+     apt_repository:
+      repo: deb https://packages.sury.org/php/ stretch main
+      state: present
+      
+   - name: install php5.6
+     apt: pkg={{ item }} state=latest update_cache=true
+     with_items:
+      - '{{ php_inst }}'
+
+...

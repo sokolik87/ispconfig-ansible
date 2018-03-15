@@ -1,0 +1,12 @@
+---
+
+   - name: configure apache
+     shell: a2enmod suexec rewrite ssl actions include dav_fs dav auth_digest cgi headers
+   - name: edit apache config
+     lineinfile:
+      path: /etc/apache2/apache2.conf
+      line: RequestHeader unset Proxy early
+   - name: restart apache
+     service: name=apache2 state=restarted
+     
+...

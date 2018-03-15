@@ -29,3 +29,9 @@ deps:
      - python-pip
      - g++
      - imagemagick
+
+enabled_apache_modules:
+     - php5.6
+     - rewrite
+     - vhost_alias
+     - expires

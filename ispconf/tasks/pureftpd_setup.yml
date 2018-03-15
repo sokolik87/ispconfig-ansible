@@ -1,0 +1,21 @@
+---
+
+   - name: edit pureftpd conf
+     lineinfile:
+       path: /etc/default/pure-ftpd-common
+       regexp: '^VIRTUALCHROOT='
+       line: 'VIRTUALCHROOT=true'
+   - name: enable pureftpd TLS
+     lineinfile:
+       path: /etc/pure-ftpd/conf/TLS
+       create: yes
+       line: 1
+       state: present
+   - name: change permissions to cert
+     file: 
+      path: /etc/ssl/private/pure-ftpd.pem
+      mode: 0600
+   - name: restart pureftpd
+     service: name=pure-ftpd-mysql state=restarted
+
+...

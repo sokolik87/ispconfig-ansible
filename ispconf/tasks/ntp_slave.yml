@@ -5,7 +5,7 @@
 
 - name: Ensure NTP is running and enabled as configured.
   systemd:
-    name: ntpd
+    name: ntp
     state: started
     enabled: yes
 
