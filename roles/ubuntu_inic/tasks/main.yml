@@ -40,13 +40,6 @@
 
 - include_tasks: edit_hosts.yml
 
-- name: symlink phpmyadmin
-  file:
-    src: /usr/share/phpmyadmin
-    dest: ~/.www/localhost/phpmyadmin
-    state: link
-    force: yes
-    
 - name: generate SSl certificate
   command: ssh-keygen -t rsa -b 4096 -C "{{ new_sys_user }}@antee.cz"
   
