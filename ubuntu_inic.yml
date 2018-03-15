@@ -1,5 +1,5 @@
 ---
-- hosts: antee-test-local 
+- hosts: antee-test 
   remote_user:  root
   vars_prompt:
      - name: "mysql_password"

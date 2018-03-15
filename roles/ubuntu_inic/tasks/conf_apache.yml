@@ -22,10 +22,10 @@
 - name: edit virtualhost
   blockinfile:
     path: /etc/apache2/sites-available/000-default.conf
-    insertafter: "<VirtualHost *:80>"
+    insertafter: '^\<VirtualHost \*\:80\>'
     block: |
       ServerName localhost
-       " <Directory /home/{{ new_sys_user }}/.www>"
+       <Directory /home/{{ new_sys_user }}/.www>
            Options Indexes FollowSymLinks MultiViews
            Require all granted
            AllowOverride All
@@ -34,7 +34,7 @@
 - name: edit apache2.conf
   lineinfile:
     path: /etc/apache2/apache2.conf
-    insertafter: "Global configuration"
+    insertafter: '^#Global configuration'
     line: "ServerName localhost"
     state: present
   notify: restart apache
@@ -72,7 +72,7 @@
 - name: symlink phpmyadmin
   file:
     src: /usr/share/phpmyadmin
-    dest: ~/.www/localhost/phpmyadmin
+    dest: "/home/{{ new_sys_user }}/.www/localhost/phpmyadmin"
     state: link
     force: yes
 

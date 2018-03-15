@@ -57,10 +57,29 @@
     variable: group_concat_max_len
     value: 100000
   notify: restart mysql
-            
-#- shell: mysql --version
-#   register: mysql_version
 
-#- name: 
-#  when: mysql_version != 15.2
-  
+- name: get version of mysql
+  shell: mysql --version
+  register: mysql_version
+
+- name: edit mysql.cnf
+  blockinfile:
+    path: /etc/mysql/conf.d/mysql.cnf
+    block: |
+      [mysqld]
+      sql_mode = "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+      group_concat_max_len=100000
+
+- name: add db
+  mysql_db:
+    name: ipo
+    state: present
+
+- name: add new user
+  mysql_user:
+    name: admin
+    host: 200.0.0.2
+    priv: 'ipo.*:ALL,GRANT'
+    state: present
+
+...  

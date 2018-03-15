@@ -1,0 +1,48 @@
+---
+
+- name: download ipo git repo
+  git: 
+    repo: 'https://git.antee.cz/ipo.git'
+    dest: "/home/{{ new_sys_user }}/work/ipo/"
+    
+- name: make ipo
+  make: 
+    chdir: "/home/{{ new_sys_user }}/work/ipo/"
+    target: "{{ item }}"
+  with_items:
+    - tmp
+    - var
+    - cache
+    - installTools
+    
+- name: create symlinks
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    force: yes
+  with_items:
+    - { src: "/home/{{ new_sys_user }}/work/ipo/view/dev-ipoadmin", dest: "/home/{{ new_sys_user }}/.www/ipoadmin.l" }
+    - { src: "/home/{{ new_sys_user }}/work/ipo/view/dev-ipo", dest: "/home/{{ new_sys_user }}/.www/ipo.l" }
+    - { src: "/home/{{ new_sys_user }}/work/ipo/view/dev-ipoadmin", dest: "/home/{{ new_sys_user }}/.www/www.ipo.l" }
+    
+- name: create config.local.php
+  template:
+    src: config.local.php.j2
+    dest: /ipo/conf/
+    
+- name: download ipo pocket repo
+  git: 
+    repo: 'https://git.antee.cz/ipo-pocket.git'
+    dest: "/home/{{ new_sys_user }}/work/ipo/"
+    
+- name: make ipo pocket
+  make: 
+    chdir: "/home/{{ new_sys_user }}/work/ipo/"
+    target: "{{ item }}"
+  with_items:
+    - minify
+    - compileTranslationsAndJS
+
+
+...

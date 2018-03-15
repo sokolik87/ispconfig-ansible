@@ -32,6 +32,13 @@
         - mysql-connector-python
         - MySQL-python
        
+- name: create dirs
+  file:
+          path: "{{ item }}"
+          state: directory
+          recurse: yes
+  with_items: "{{ home_dirs }}"
+
 - include_tasks: mysql_inic.yml
 
 - include_tasks: conf_apache.yml
@@ -40,9 +47,6 @@
 
 - include_tasks: edit_hosts.yml
 
-- name: generate SSl certificate
-  command: ssh-keygen -t rsa -b 4096 -C "{{ new_sys_user }}@antee.cz"
-  
 - name: fakemail setup
   copy:
     src: fakemail 
@@ -50,4 +54,6 @@
     mode: 0775
     owner: "{{ new_sys_user }}"
     group: "{{ new_sys_user }}"
+
+- include_tasks: ipo_setup.yml    
 ...

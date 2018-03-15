@@ -1,0 +1,38 @@
+        <?php
+        return array(
+               'database' => array(
+               'host' => 'localhost',
+               'user' => 'root',
+               'password' => 'toor',
+               'dbname' => 'ipo',
+                ),
+
+               'email' => array(
+               'do' => 'both', # log | send | both
+               'sender' => 'ipo@antee.cz', # fallback sender
+               'log_directory' => '%rootDir%/var/log/mails',
+               ),
+
+               'onlinepayment' => [
+                       'enable' => true,
+                       'production' => true,
+                       'goid' => '8061110288',
+               ],
+
+               'piwik' => array(
+                       'auth_token' => '85520fae104fe454884a843f699aaad0',
+                       'address' => 'https://piwik.antee.cz/piwik/index.php',
+               ),
+               'showErrors' => true,
+               'paths' => array(
+                       'hacksDir' => '%rootDir%/hacks',
+                       'pagesDir' => '%rootDir%/ipo-pocket/pages',
+                       'compsDir' => '%rootDir%/ipo-pocket/comps',
+               ),
+               'htdocs_dir' => $root . '/tmp',
+               'google' => array(
+                       'recaptchaLink' => 'https://www.google.com/recaptcha/api/siteverify',
+                       'recaptchaSiteKey' => '6LfWBxMUAAAAANodxCGYIX8-MTXafQN5FYl10oqG',
+                       'recaptchaPrivateKey' => '6LfWBxMUAAAAAGrXu5srNz3ca-ZDbAWDckQ51okR',
+               ),
+        );
